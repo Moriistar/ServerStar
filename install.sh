@@ -3,6 +3,22 @@
 # Colors
 red="\e[31m"; green="\e[32m"; yellow="\e[33m"; blue="\e[34m"; reset="\e[0m"
 
+# Banner
+clear
+echo -e "\e[36m"
+cat << "EOF"
+  ____   ___   _   _ _____ _      _____  ____  _    ____  _   _ 
+ |  _ \ / _ \ | \ | | ____| |    | ____|/ ___|| |  |  _ \| \ | |
+ | |_) | | | ||  \| |  _| | |    |  _|  \___ \| |  | |_) |  \| |
+ |  __/| |_| || |\  | |___| |___ | |___  ___) | |__|  __/| |\  |
+ |_|    \___/ |_| \_|_____|_____|_____| |____/|____|_|   |_| \_|
+
+             Telegram Channel: @ServerStar_ir
+                     Project: PANEL STAR
+EOF
+echo -e "\e[0m"
+sleep 2
+
 print_menu() {
   clear
   echo -e "${blue}==================== ServerStar Menu ====================${reset}"
@@ -22,7 +38,6 @@ print_menu() {
   echo -ne "\nSelect an option: "
 }
 
-# Each function:
 install_mhsanaei_xui() {
   echo -e "${green}Installing MHSanaei X-UI...${reset}"
   bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
