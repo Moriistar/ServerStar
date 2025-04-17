@@ -7,11 +7,11 @@ red="\e[31m"; green="\e[32m"; yellow="\e[33m"; blue="\e[34m"; reset="\e[0m"
 clear
 echo -e "\e[36m"
 cat << "EOF"
-____   _   _   _____   _      _____   _      ____   _____    _    ____  
- |  _ \ | \ | | | ____| | |    |_   _| | |    / ___| | ____|  / \  |  _ \ 
- | |_) ||  \| | |  _|   | |      | |   | |    \___ \ |  _|   / _ \ | |_) |
- |  __/ | |\  | | |___  | |___   | |   | |___  ___) || |___ / ___ \|  __/ 
- |_|    |_| \_| |_____| |_____|  |_|   |_____||____/ |_____/_/   \_\_|
+  ____   ___   _   _ _____ _      _____  ____  _    ____  _   _ 
+ |  _ \ / _ \ | \ | | ____| |    | ____|/ ___|| |  |  _ \| \ | |
+ | |_) | | | ||  \| |  _| | |    |  _|  \___ \| |  | |_) |  \| |
+ |  __/| |_| || |\  | |___| |___ | |___  ___) | |__|  __/| |\  |
+ |_|    \___/ |_| \_|_____|_____|_____| |____/|____|_|   |_| \_|
 
              Telegram Channel: @ServerStar_ir
                      Project: PANEL STAR
@@ -36,7 +36,8 @@ print_menu() {
   echo -e "12. Detect Server Location"
   echo -e "13. Generate Random Local IPv6"
   echo -e "14. Manual Tunnel Setup (Input IP)"
-  echo -e "15. Exit"
+  echo -e "15. Fix WARP (fscarmen + Memory Monitor)"
+  echo -e "16. Exit"
   echo -ne "\nSelect an option: "
 }
 
@@ -134,6 +135,103 @@ manual_tunnel_setup() {
   read -n1 -rp $'Press any key to return to menu...'
 }
 
+fix_warp_fscarmen() {
+    echo "Installing WARP (fscarmen)..."
+    wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh
+
+    CONFIG_FILE="/etc/wireguard/proxy.conf"
+    NEW_ENDPOINT="engage.cloudflareclient.com:2408"
+
+    if [ -f "$CONFIG_FILE" ]; then
+        echo "Editing $CONFIG_FILE and replacing Endpoint..."
+        sed -i '/^Endpoint = /c\Endpoint = '"$NEW_ENDPOINT" "$CONFIG_FILE"
+        sed -i '/^$/d' "$CONFIG_FILE"  # Remove empty lines
+    else
+        echo "File proxy.conf not found. Operation canceled."
+        return
+    fi
+
+    echo "Running warp y to reconnect..."
+    warp y
+
+    echo "Creating wireproxy RAM usage monitor script..."
+    LOG_FILE="/var/log/wireproxy_monitor.log"
+    MONITOR_SCRIPT="/root/monitor_wireproxy.sh"
+
+    sudo touch "$LOG_FILE"
+    sudo chmod 644 "$LOG_FILE"
+
+    cat > "$MONITOR_SCRIPT" << EOF
+#!/bin/bash
+
+PROCESS_NAME="wireproxy"
+MEMORY_LIMIT=2000
+CHECK_INTERVAL=600
+LOG_FILE="$LOG_FILE"
+
+is_process_running() {
+    pgrep -x "\$PROCESS_NAME" > /dev/null
+    return \$?
+}
+
+check_memory_usage() {
+    MEMORY_USAGE=\$(ps -C "\$PROCESS_NAME" -o rss= | awk '{sum+=\$1} END {print sum/1024}')
+
+    if [ -z "\$MEMORY_USAGE" ]; then
+        echo "[\$(date)] No RAM usage found for \$PROCESS_NAME." | tee -a "\$LOG_FILE"
+        return
+    fi
+
+    if (( \$(echo "\$MEMORY_USAGE > \$MEMORY_LIMIT" | bc -l) )); then
+        echo "[\$(date)] RAM usage for \$PROCESS_NAME exceeded the limit: \$MEMORY_USAGE MB" | tee -a "\$LOG_FILE"
+        echo "[\$(date)] Restarting \$PROCESS_NAME..." | tee -a "\$LOG_FILE"
+        sudo systemctl restart wireproxy
+        if [ \$? -ne 0 ]; then
+            echo "[\$(date)] Error restarting \$PROCESS_NAME." | tee -a "\$LOG_FILE"
+        else
+            echo "[\$(date)] \$PROCESS_NAME was successfully restarted." | tee -a "\$LOG_FILE"
+        fi
+    else
+        echo "[\$(date)] RAM usage for \$PROCESS_NAME is within the allowed range: \$MEMORY_USAGE MB" | tee -a "\$LOG_FILE"
+    fi
+}
+
+while true; do
+    if is_process_running; then
+        check_memory_usage
+    else
+        echo "[\$(date)] Process \$PROCESS_NAME is not running." | tee -a "\$LOG_FILE"
+    fi
+    sleep "\$CHECK_INTERVAL"
+done
+EOF
+
+    chmod +x "$MONITOR_SCRIPT"
+
+    echo "Creating wireproxy RAM monitor service..."
+    cat > /etc/systemd/system/monitor-wireproxy.service << EOF
+[Unit]
+Description=Monitor and Restart WireProxy Service
+After=network.target
+
+[Service]
+ExecStart=$MONITOR_SCRIPT
+Restart=always
+User=root
+StandardOutput=append:$LOG_FILE
+StandardError=append:$LOG_FILE
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    systemctl daemon-reload
+    systemctl enable monitor-wireproxy
+    systemctl start monitor-wireproxy
+
+    echo -e "\n✅ Operation completed successfully. wireproxy RAM monitor service is active."
+} 
+
 # Menu loop
 while true; do
   print_menu
@@ -153,7 +251,8 @@ while true; do
     12) check_location ;;
     13) generate_ipv6 ;;
     14) manual_tunnel_setup ;;
-    15) break ;;
+    15) fix_warp_fscarmen ;;
+    16) break ;;
     *) echo -e "${red}Invalid option!${reset}"; sleep 1 ;;
   esac
 done
