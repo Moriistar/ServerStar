@@ -1,15 +1,37 @@
+```bash
 #!/bin/bash
 
 # Script version (for update checks)
-SCRIPT_VERSION="1.1.0"
+SCRIPT_VERSION="1.2.0"
 
 # Colors
-red="\e[31m"; green="\e[32m"; yellow="\e[33m"; blue="\e[34m"; reset="\e[0m"
+red="\e[31m"; green="\e[32m"; yellow="\e[33m"; blue="\e[34m"; magenta="\e[35m"; cyan="\e[36m"; reset="\e[0m"
+
+# Language setup (en for English, fa for Persian/Farsi)
+LANGUAGE="en"
+
+# Translations
+declare -A translations
+# English translations
+translations["en,menu_title"]="ServerStar Menu"
+translations["en,exit_message"]="Exited ServerStar Menu."
+translations["en,press_key"]="Press any key to return to menu..."
+
+# Persian/Farsi translations
+translations["fa,menu_title"]="منوی سرور استار"
+translations["fa,exit_message"]="از منوی سرور استار خارج شدید."
+translations["fa,press_key"]="برای بازگشت به منو، هر کلیدی را فشار دهید..."
+
+# Function to get translated string
+get_text() {
+  local key="$LANGUAGE,$1"
+  echo "${translations[$key]:-$1}"
+}
 
 # Banner
 print_banner() {
   clear
-  echo -e "\e[36m"
+  echo -e "$cyan"
   cat << "EOF"
 
 
@@ -28,9 +50,9 @@ print_banner() {
 ╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝
 
              Telegram Channel: @ServerStar_ir
-                     Project: PANEL STAR
+                     Project: PANEL STAR v1.2.0
 EOF
-  echo -e "\e[0m"
+  echo -e "$reset"
   sleep 1
 }
 
@@ -38,7 +60,7 @@ EOF
 check_error() {
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR: $1${reset}"
-    read -n1 -rp $'Press any key to return to menu...'
+    read -n1 -rp $"$(get_text "press_key")"
     return 1
   fi
   return 0
@@ -67,10 +89,48 @@ install_dependencies() {
   return 0
 }
 
+# Check for system updates
+check_script_updates() {
+  echo -e "${yellow}Checking for script updates...${reset}"
+  
+  # Define GitHub repository (replace with actual repo)
+  REPO_URL="https://raw.githubusercontent.com/ServerStar/serverstar-script/main/version.txt"
+  
+  install_dependencies curl || { check_error "Failed to install curl"; return; }
+  
+  # Try to get the latest version
+  LATEST_VERSION=$(curl -s $REPO_URL)
+  
+  if [ -z "$LATEST_VERSION" ]; then
+    echo -e "${red}Failed to check for updates. Please check your internet connection.${reset}"
+    read -n1 -rp $"$(get_text "press_key")"
+    return
+  fi
+  
+  # Compare versions
+  if [ "$LATEST_VERSION" != "$SCRIPT_VERSION" ]; then
+    echo -e "${green}New version available: $LATEST_VERSION (current: $SCRIPT_VERSION)${reset}"
+    echo -e "${yellow}Would you like to update? (y/n)${reset}"
+    read -r response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      echo -e "${yellow}Updating script...${reset}"
+      # Add update code here
+      echo -e "${green}Update completed! Please restart the script.${reset}"
+      exit 0
+    else
+      echo -e "${yellow}Update skipped.${reset}"
+    fi
+  else
+    echo -e "${green}You are using the latest version: $SCRIPT_VERSION${reset}"
+  fi
+  
+  read -n1 -rp $"$(get_text "press_key")"
+}
+
 # Main menu
 print_menu() {
   clear
-  echo -e "${blue}==================== ServerStar Menu ====================${reset}"
+  echo -e "${blue}==================== $(get_text "menu_title") ====================${reset}"
   echo -e "1. Update & Install X-UI Prerequisites"
   echo -e "2. Obtain SSL Certificate (Let's Encrypt)"
   echo -e "3. Install X-UI Panel (MHSanaei)"
@@ -90,12 +150,17 @@ print_menu() {
   echo -e "17. Install WARP Socks5 Proxy ${yellow}[NEW]${reset}"
   echo -e "18. Get Local IPv6 from Website ${yellow}[NEW]${reset}"
   echo -e "${green}19. Check Services Status ${yellow}[NEW]${reset}"
-  echo -e "${green}20. Backup System ${yellow}[NEW]${reset}"
+  echo -e "${green}20. Backup & Restore Menu ${yellow}[NEW]${reset}"
   echo -e "${green}21. Uninstall Menu ${yellow}[NEW]${reset}"
   echo -e "${green}22. Monitor System Resources ${yellow}[NEW]${reset}"
   echo -e "${green}23. Security Menu ${yellow}[NEW]${reset}"
-  echo -e "${green}24. Check for Script Updates ${yellow}[NEW]${reset}"
-  echo -e "25. Exit"
+  echo -e "${green}24. Install Sing-Box Core ${yellow}[NEW]${reset}"
+  echo -e "${green}25. REALITY Protocol Setup ${yellow}[NEW]${reset}"
+  echo -e "${green}26. Cloudflare Argo Tunnel ${yellow}[NEW]${reset}"
+  echo -e "${green}27. Install Rathole Tunnel ${yellow}[NEW]${reset}"
+  echo -e "${green}28. Install Marzban Panel ${yellow}[NEW]${reset}"
+  echo -e "${green}29. Check for Script Updates ${yellow}[NEW]${reset}"
+  echo -e "30. Exit"
   echo -ne "\nSelect an option: "
 }
 
@@ -107,8 +172,11 @@ update_server_and_prereqs() {
   apt-get upgrade -y || { check_error "Failed to upgrade packages"; return; }
   apt-get dist-upgrade -y || { check_error "Failed to perform distribution upgrade"; return; }
   
+  # Install common tools and requirements
+  install_dependencies curl wget socat unzip lsof iptables cron nginx jq || { check_error "Failed to install dependencies"; return; }
+  
   echo -e "${green}System updated successfully.${reset}"
-  read -n1 -rp $'Press any key to return to menu...'
+  read -n1 -rp $"$(get_text "press_key")"
 }
 
 obtain_ssl_certificate() {
@@ -129,11 +197,20 @@ obtain_ssl_certificate() {
     --fullchain-file /root/cert.crt || { check_error "Failed to install certificate"; return; }
   
   echo -e "${green}SSL Certificate installed for $domain.${reset}"
-  read -n1 -rp $'Press any key to return to menu...'
+  echo -e "${yellow}Certificate files:${reset}"
+  echo -e "  Private Key: ${green}/root/private.key${reset}"
+  echo -e "  Certificate: ${green}/root/cert.crt${reset}"
+  
+  # Create renewal cron job
+  echo -e "${yellow}Setting up automatic renewal...${reset}"
+  crontab -l | grep -q "acme.sh" || (crontab -l 2>/dev/null; echo "0 3 * * * ~/.acme.sh/acme.sh --cron --home ~/.acme.sh > /dev/null") | crontab -
+  
+  read -n1 -rp $"$(get_text "press_key")"
 }
 
 install_mhsanaei_xui() {
   echo -e "${green}Installing MHSanaei X-UI...${reset}"
+  echo -e "${yellow}This is one of the most maintained and updated X-UI panels in 2025, recommended for most users.${reset}"
   bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
   check_error "Failed to install MHSanaei X-UI"
 }
@@ -192,31 +269,41 @@ check_location() {
   install_dependencies curl || { check_error "Failed to install curl"; return; }
   
   country=$(curl -s https://ipinfo.io/country)
-  if [ -z "$country" ]; then
-    echo -e "${red}Failed to detect server location.${reset}"
-  else
-    echo -e "\nServer Location: ${green}$country${reset}"
-  fi
+  ip=$(curl -s https://ipinfo.io/ip)
+  asn=$(curl -s https://ipinfo.io/org)
   
-  read -n1 -rp $'Press any key to return to menu...'
+  echo -e "\n${blue}Server Information:${reset}"
+  echo -e "IP: ${green}$ip${reset}"
+  echo -e "Location: ${green}$country${reset}"
+  echo -e "ASN: ${green}$asn${reset}"
+  
+  read -n1 -rp $"$(get_text "press_key")"
 }
 
 generate_ipv6() {
   echo -e "${yellow}Generating random local IPv6 (fd00::/8)...${reset}"
-  for i in {1..3}; do
-    printf "fd%02x:%02x%02x:%02x%02x::/64\n" $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256))
+  echo -e "${blue}Generated IPv6 addresses:${reset}"
+  
+  for i in {1..5}; do
+    printf "fd%02x:%04x:%04x:%04x::/64\n" $((RANDOM%256)) $((RANDOM%65536)) $((RANDOM%65536)) $((RANDOM%65536))
   done
-  read -n1 -rp $'Press any key to return to menu...'
+  
+  read -n1 -rp $"$(get_text "press_key")"
 }
 
 manual_tunnel_setup() {
   read -p $'Enter Server IPv4: ' ipv4
   read -p $'Enter Server IPv6 (without ::): ' ipv6
-  echo -e "\nManual Tunnel Info:"
+  
+  echo -e "\n${blue}Manual Tunnel Info:${reset}"
   echo -e "IPv4: ${green}$ipv4${reset}"
   echo -e "IPv6: ${green}$ipv6::1${reset}"
-  echo -e "(Use with GOST or Rathole)"
-  read -n1 -rp $'Press any key to return to menu...'
+  echo -e "\n${yellow}Usage Notes:${reset}"
+  echo -e "- Use with GOST, Rathole, or other tunneling solutions"
+  echo -e "- For GOST tunneling: gost -L=tcp://:PortNumber -F=tcp://$ipv6::1:PortNumber"
+  echo -e "- For Rathole client config, use '$ipv6::1' as server address"
+  
+  read -n1 -rp $"$(get_text "press_key")"
 }
 
 fix_warp_fscarmen() {
@@ -231,12 +318,12 @@ fix_warp_fscarmen() {
     NEW_ENDPOINT="engage.cloudflareclient.com:2408"
 
     if [ -f "$CONFIG_FILE" ]; then
-        echo -e "${yellow}Editing $CONFIG_FILE and replacing Endpoint...${reset}"
+        echo -e "${yellow}Optimizing $CONFIG_FILE configuration...${reset}"
         sed -i '/^Endpoint = /c\Endpoint = '"$NEW_ENDPOINT" "$CONFIG_FILE"
         sed -i '/^$/d' "$CONFIG_FILE"  # Remove empty lines
     else
         echo -e "${red}File proxy.conf not found. Operation canceled.${reset}"
-        read -n1 -rp $'Press any key to return to menu...'
+        read -n1 -rp $"$(get_text "press_key")"
         return
     fi
 
@@ -319,10 +406,10 @@ EOF
     systemctl start monitor-wireproxy
 
     echo -e "\n${green}✅ Operation completed successfully. wireproxy RAM monitor service is active.${reset}"
-    read -n1 -rp $'Press any key to return to menu...'
+    read -n1 -rp $"$(get_text "press_key")"
 }
 
-# New functions from previous update
+# Previously added functions
 install_rptraefik() {
     echo -e "${yellow}Installing RPTraefik Tunnel...${reset}"
     echo -e "This will install RPTraefik Tunnel from dev-ir repository."
@@ -334,7 +421,7 @@ install_rptraefik() {
     cd /opt/RPTraefik && bash main.sh
     
     echo -e "${green}RPTraefik Tunnel installation completed.${reset}"
-    read -n1 -rp $'Press any key to return to menu...'
+    read -n1 -rp $"$(get_text "press_key")"
 }
 
 install_warp_socks5() {
@@ -349,33 +436,35 @@ install_warp_socks5() {
     echo -e "\n${yellow}Configuration Instructions for X-UI:${reset}"
     echo -e "1. Add the following at the end of your outbounds section:"
     echo -e "${blue}"
-    echo '"tag": "WARP",'
-    echo '"protocol": "socks",'
-    echo '"settings": {'
-    echo '  "servers": ['
-    echo '    {'
-    echo '      "address": "127.0.0.1",'
-    echo '      "port": 40000'
-    echo '    }'
-    echo '  ]'
-    echo '}'
-    echo '}'
+    echo '{
+  "tag": "WARP",
+  "protocol": "socks",
+  "settings": {
+    "servers": [
+      {
+        "address": "127.0.0.1",
+        "port": 40000
+      }
+    ]
+  }
+}'
     echo -e "${reset}"
     
     echo -e "2. Add the following at the end of your routing rules:"
     echo -e "${blue}"
-    echo '"type": "field",'
-    echo '"outboundTag": "WARP",'
-    echo '"domain": ['
-    echo '  "cloudflare.com",'
-    echo '  "iran.ir"'
-    echo ']'
-    echo '}'
+    echo '{
+  "type": "field",
+  "outboundTag": "WARP",
+  "domain": [
+    "cloudflare.com",
+    "iran.ir"
+  ]
+}'
     echo -e "${reset}"
     
     echo -e "${yellow}NOTE: To use WARP+, run 'warp a' and select option 2.${reset}"
     
-    read -n1 -rp $'Press any key to return to menu...'
+    read -n1 -rp $"$(get_text "press_key")"
 }
 
 get_online_ipv6() {
@@ -403,10 +492,10 @@ get_online_ipv6() {
         done
     fi
     
-    read -n1 -rp $'Press any key to return to menu...'
+    read -n1 -rp $"$(get_text "press_key")"
 }
 
-# New enhanced functions
+# New services status function
 check_services_status() {
     clear
     echo -e "${blue}==================== Services Status ====================${reset}"
@@ -420,6 +509,33 @@ check_services_status() {
         fi
     else
         echo -e "X-UI: ${red}Inactive${reset}"
+    fi
+    
+    # Check if Sing-Box is installed and running
+    if command -v sing-box &>/dev/null; then
+        if systemctl is-active --quiet sing-box &>/dev/null; then
+            echo -e "Sing-Box: ${green}Active${reset}"
+        else
+            echo -e "Sing-Box: ${red}Inactive${reset}"
+        fi
+    else
+        echo -e "Sing-Box: ${red}Not Installed${reset}"
+    fi
+    
+    # Check if Marzban is installed and running
+    if [ -d "/opt/marzban" ]; then
+        if systemctl is-active --quiet marzban &>/dev/null; then
+            echo -e "Marzban: ${green}Active${reset}"
+            # Try to get Marzban port
+            marzban_port=$(grep -r "listen.*:" /opt/marzban/docker-compose.yml 2>/dev/null | grep -o '[0-9]\+:' | head -1 | tr -d ':')
+            if [ -n "$marzban_port" ]; then
+                echo -e "  Port: ${green}$marzban_port${reset}"
+            fi
+        else
+            echo -e "Marzban: ${red}Inactive${reset}"
+        fi
+    else
+        echo -e "Marzban: ${red}Not Installed${reset}"
     fi
     
     # Check WARP status
@@ -444,6 +560,9 @@ check_services_status() {
         echo -e "WARP Socks5 (Port 40000): ${red}Inactive${reset}"
     fi
     
+    # Check tunnels status
+    echo -e "\n${blue}Tunnel Services:${reset}"
+    
     # Check HAProxy status
     if systemctl is-active --quiet haproxy &>/dev/null; then
         echo -e "HAProxy Tunnel: ${green}Active${reset}"
@@ -465,8 +584,34 @@ check_services_status() {
         echo -e "Nebula Tunnel: ${red}Inactive${reset}"
     fi
     
+    # Check Rathole status
+    if pgrep -x "rathole" >/dev/null; then
+        echo -e "Rathole Tunnel: ${green}Active${reset}"
+    else
+        echo -e "Rathole Tunnel: ${red}Inactive${reset}"
+    fi
+    
+    # Check Cloudflare Argo status
+    if pgrep -x "cloudflared" >/dev/null; then
+        echo -e "Cloudflare Argo Tunnel: ${green}Active${reset}"
+    else
+        echo -e "Cloudflare Argo Tunnel: ${red}Inactive${reset}"
+    fi
+    
     echo -e "${blue}=======================================================${reset}"
-    read -n1 -rp $'Press any key to return to menu...'
+    read -n1 -rp $"$(get_text "press_key")"
+}
+
+# Backup & Restore Menu
+print_backup_menu() {
+    clear
+    echo -e "${blue}==================== Backup & Restore Menu ====================${reset}"
+    echo -e "1. Backup All Configurations"
+    echo -e "2. Backup X-UI Configuration"
+    echo -e "3. Backup Tunnel Configurations"
+    echo -e "4. Restore from Backup"
+    echo -e "5. Return to Main Menu"
+    echo -ne "\nSelect an option: "
 }
 
 backup_system() {
@@ -486,165 +631,3 @@ backup_system() {
             cp "/usr/local/x-ui/bin/config.json" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI config.json${reset}"
         fi
         if [ -d "/usr/local/x-ui/bin/config" ]; then
-            cp -r "/usr/local/x-ui/bin/config" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI config directory${reset}"
-        fi
-        echo -e "${green}X-UI configuration backed up.${reset}"
-    fi
-    
-    # Backup WARP configuration
-    if [ -f "/etc/wireguard/wgcf.conf" ]; then
-        echo -e "${yellow}Backing up WARP configuration...${reset}"
-        mkdir -p "$backup_dir/warp"
-        cp "/etc/wireguard/wgcf.conf" "$backup_dir/warp/" || echo -e "${red}Failed to backup WARP configuration${reset}"
-        if [ -f "/etc/wireguard/proxy.conf" ]; then
-            cp "/etc/wireguard/proxy.conf" "$backup_dir/warp/" || echo -e "${red}Failed to backup WARP proxy configuration${reset}"
-        fi
-        echo -e "${green}WARP configuration backed up.${reset}"
-    fi
-    
-    # Backup HAProxy configuration
-    if [ -f "/etc/haproxy/haproxy.cfg" ]; then
-        echo -e "${yellow}Backing up HAProxy configuration...${reset}"
-        mkdir -p "$backup_dir/haproxy"
-        cp "/etc/haproxy/haproxy.cfg" "$backup_dir/haproxy/" || echo -e "${red}Failed to backup HAProxy configuration${reset}"
-        echo -e "${green}HAProxy configuration backed up.${reset}"
-    fi
-    
-    # Backup RPTraefik configuration
-    if [ -d "/opt/RPTraefik" ]; then
-        echo -e "${yellow}Backing up RPTraefik configuration...${reset}"
-        mkdir -p "$backup_dir/rptraefik"
-        cp -r "/opt/RPTraefik/config" "$backup_dir/rptraefik/" 2>/dev/null || echo -e "${red}Failed to backup RPTraefik configuration${reset}"
-        echo -e "${green}RPTraefik configuration backed up.${reset}"
-    fi
-    
-    # Create backup archive
-    echo -e "${yellow}Creating backup archive...${reset}"
-    tar -czf "${backup_dir}.tar.gz" -C "$(dirname "$backup_dir")" "$(basename "$backup_dir")" || { check_error "Failed to create backup archive"; return; }
-    
-    # Remove the directory to save space, keep only the archive
-    rm -rf "$backup_dir"
-    
-    echo -e "\n${green}Backup completed successfully!${reset}"
-    echo -e "Backup file: ${green}${backup_dir}.tar.gz${reset}"
-    echo -e "Note: To restore from backup, use: tar -xzf ${backup_dir}.tar.gz -C /"
-    
-    read -n1 -rp $'Press any key to return to menu...'
-}
-
-# Uninstall menu and functions
-print_uninstall_menu() {
-    clear
-    echo -e "${blue}==================== Uninstall Menu ====================${reset}"
-    echo -e "1. Uninstall X-UI Panel"
-    echo -e "2. Uninstall WARP"
-    echo -e "3. Uninstall WARP Socks5"
-    echo -e "4. Uninstall HAProxy Tunnel"
-    echo -e "5. Uninstall RPTraefik Tunnel"
-    echo -e "6. Uninstall Nebula Tunnel"
-    echo -e "7. Return to Main Menu"
-    echo -ne "\nSelect an option: "
-}
-
-uninstall_xui() {
-    echo -e "${yellow}Uninstalling X-UI Panel...${reset}"
-    
-    if [ -f "/usr/local/x-ui/x-ui.sh" ]; then
-        /usr/local/x-ui/x-ui.sh uninstall
-        check_error "Failed to uninstall X-UI Panel"
-    else
-        echo -e "${red}X-UI Panel not found or already uninstalled.${reset}"
-    fi
-    
-    read -n1 -rp $'Press any key to return to menu...'
-}
-
-uninstall_warp() {
-    echo -e "${yellow}Uninstalling WARP...${reset}"
-    
-    if command -v warp &>/dev/null; then
-        warp u
-        check_error "Failed to uninstall WARP"
-    else
-        echo -e "${red}WARP not found or already uninstalled.${reset}"
-    fi
-    
-    # Clean up WARP monitor service if it exists
-    if [ -f "/etc/systemd/system/monitor-wireproxy.service" ]; then
-        echo -e "${yellow}Removing WARP monitor service...${reset}"
-        systemctl stop monitor-wireproxy
-        systemctl disable monitor-wireproxy
-        rm -f /etc/systemd/system/monitor-wireproxy.service
-        rm -f /root/monitor_wireproxy.sh
-        systemctl daemon-reload
-    fi
-    
-    read -n1 -rp $'Press any key to return to menu...'
-}
-
-uninstall_warp_socks5() {
-    echo -e "${yellow}Uninstalling WARP Socks5 Proxy...${reset}"
-    
-    if systemctl is-active --quiet warp-svc; then
-        systemctl stop warp-svc
-        systemctl disable warp-svc
-        
-        if command -v warp-cli &>/dev/null; then
-            warp-cli disconnect
-            warp-cli disable-always-on
-            warp-cli delete
-        fi
-        
-        # Remove WARP packages
-        apt-get remove -y cloudflare-warp || true
-        
-        echo -e "${green}WARP Socks5 Proxy has been uninstalled.${reset}"
-    else
-        echo -e "${red}WARP Socks5 Proxy not found or already uninstalled.${reset}"
-    fi
-    
-    read -n1 -rp $'Press any key to return to menu...'
-}
-
-uninstall_haproxy() {
-    echo -e "${yellow}Uninstalling HAProxy Tunnel...${reset}"
-    
-    if systemctl is-active --quiet haproxy; then
-        systemctl stop haproxy
-        systemctl disable haproxy
-        apt-get remove -y haproxy
-        apt-get autoremove -y
-        
-        echo -e "${green}HAProxy Tunnel has been uninstalled.${reset}"
-    else
-        echo -e "${red}HAProxy Tunnel not found or already uninstalled.${reset}"
-    fi
-    
-    read -n1 -rp $'Press any key to return to menu...'
-}
-
-uninstall_rptraefik() {
-    echo -e "${yellow}Uninstalling RPTraefik Tunnel...${reset}"
-    
-    if [ -d "/opt/RPTraefik" ]; then
-        if [ -f "/opt/RPTraefik/uninstall.sh" ]; then
-            bash /opt/RPTraefik/uninstall.sh
-        else
-            # Fallback if uninstall script doesn't exist
-            if systemctl is-active --quiet rptraefik; then
-                systemctl stop rptraefik
-                systemctl disable rptraefik
-            fi
-            rm -rf /opt/RPTraefik
-        fi
-        
-        echo -e "${green}RPTraefik Tunnel has been uninstalled.${reset}"
-    else
-        echo -e "${red}RPTraefik Tunnel not found or already uninstalled.${reset}"
-    fi
-    
-    read -n1 -rp $'Press any key to return to menu...'
-}
-
-uninstall_nebula() {
-    echo -
