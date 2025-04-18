@@ -7,7 +7,7 @@ SCRIPT_VERSION="1.2.0"
 red="\e[31m"; green="\e[32m"; yellow="\e[33m"; blue="\e[34m"; magenta="\e[35m"; cyan="\e[36m"; reset="\e[0m"
 
 # Language setup (en for English, fa for Persian/Farsi)
-LANGUAGE="en"
+LANGUAGE="fa"
 
 # Translations
 declare -A translations
@@ -59,7 +59,7 @@ EOF
 check_error() {
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR: $1${reset}"
-    read -n1 -rp $"$(get_text "press_key")"
+    read -n1 -rp "$(get_text "press_key")"
     return 1
   fi
   return 0
@@ -86,44 +86,6 @@ install_dependencies() {
   fi
   
   return 0
-}
-
-# Check for system updates
-check_script_updates() {
-  echo -e "${yellow}Checking for script updates...${reset}"
-  
-  # Define GitHub repository (replace with actual repo)
-  REPO_URL="https://raw.githubusercontent.com/ServerStar/serverstar-script/main/version.txt"
-  
-  install_dependencies curl || { check_error "Failed to install curl"; return; }
-  
-  # Try to get the latest version
-  LATEST_VERSION=$(curl -s $REPO_URL)
-  
-  if [ -z "$LATEST_VERSION" ]; then
-    echo -e "${red}Failed to check for updates. Please check your internet connection.${reset}"
-    read -n1 -rp $"$(get_text "press_key")"
-    return
-  fi
-  
-  # Compare versions
-  if [ "$LATEST_VERSION" != "$SCRIPT_VERSION" ]; then
-    echo -e "${green}New version available: $LATEST_VERSION (current: $SCRIPT_VERSION)${reset}"
-    echo -e "${yellow}Would you like to update? (y/n)${reset}"
-    read -r response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      echo -e "${yellow}Updating script...${reset}"
-      # Add update code here
-      echo -e "${green}Update completed! Please restart the script.${reset}"
-      exit 0
-    else
-      echo -e "${yellow}Update skipped.${reset}"
-    fi
-  else
-    echo -e "${green}You are using the latest version: $SCRIPT_VERSION${reset}"
-  fi
-  
-  read -n1 -rp $"$(get_text "press_key")"
 }
 
 # Main menu
@@ -172,10 +134,10 @@ update_server_and_prereqs() {
   apt-get dist-upgrade -y || { check_error "Failed to perform distribution upgrade"; return; }
   
   # Install common tools and requirements
-  install_dependencies curl wget socat unzip lsof iptables cron nginx jq || { check_error "Failed to install dependencies"; return; }
+  install_dependencies curl wget socat unzip lsof iptables cron jq || { check_error "Failed to install dependencies"; return; }
   
   echo -e "${green}System updated successfully.${reset}"
-  read -n1 -rp $"$(get_text "press_key")"
+  read -n1 -rp "$(get_text "press_key")"
 }
 
 obtain_ssl_certificate() {
@@ -204,7 +166,7 @@ obtain_ssl_certificate() {
   echo -e "${yellow}Setting up automatic renewal...${reset}"
   crontab -l | grep -q "acme.sh" || (crontab -l 2>/dev/null; echo "0 3 * * * ~/.acme.sh/acme.sh --cron --home ~/.acme.sh > /dev/null") | crontab -
   
-  read -n1 -rp $"$(get_text "press_key")"
+  read -n1 -rp "$(get_text "press_key")"
 }
 
 install_mhsanaei_xui() {
@@ -276,7 +238,7 @@ check_location() {
   echo -e "Location: ${green}$country${reset}"
   echo -e "ASN: ${green}$asn${reset}"
   
-  read -n1 -rp $"$(get_text "press_key")"
+  read -n1 -rp "$(get_text "press_key")"
 }
 
 generate_ipv6() {
@@ -287,7 +249,7 @@ generate_ipv6() {
     printf "fd%02x:%04x:%04x:%04x::/64\n" $((RANDOM%256)) $((RANDOM%65536)) $((RANDOM%65536)) $((RANDOM%65536))
   done
   
-  read -n1 -rp $"$(get_text "press_key")"
+  read -n1 -rp "$(get_text "press_key")"
 }
 
 manual_tunnel_setup() {
@@ -302,7 +264,7 @@ manual_tunnel_setup() {
   echo -e "- For GOST tunneling: gost -L=tcp://:PortNumber -F=tcp://$ipv6::1:PortNumber"
   echo -e "- For Rathole client config, use '$ipv6::1' as server address"
   
-  read -n1 -rp $"$(get_text "press_key")"
+  read -n1 -rp "$(get_text "press_key")"
 }
 
 fix_warp_fscarmen() {
@@ -322,7 +284,7 @@ fix_warp_fscarmen() {
         sed -i '/^$/d' "$CONFIG_FILE"  # Remove empty lines
     else
         echo -e "${red}File proxy.conf not found. Operation canceled.${reset}"
-        read -n1 -rp $"$(get_text "press_key")"
+        read -n1 -rp "$(get_text "press_key")"
         return
     fi
 
@@ -405,7 +367,7 @@ EOF
     systemctl start monitor-wireproxy
 
     echo -e "\n${green}✅ Operation completed successfully. wireproxy RAM monitor service is active.${reset}"
-    read -n1 -rp $"$(get_text "press_key")"
+    read -n1 -rp "$(get_text "press_key")"
 }
 
 # Previously added functions
@@ -420,7 +382,7 @@ install_rptraefik() {
     cd /opt/RPTraefik && bash main.sh
     
     echo -e "${green}RPTraefik Tunnel installation completed.${reset}"
-    read -n1 -rp $"$(get_text "press_key")"
+    read -n1 -rp "$(get_text "press_key")"
 }
 
 install_warp_socks5() {
@@ -463,7 +425,7 @@ install_warp_socks5() {
     
     echo -e "${yellow}NOTE: To use WARP+, run 'warp a' and select option 2.${reset}"
     
-    read -n1 -rp $"$(get_text "press_key")"
+    read -n1 -rp "$(get_text "press_key")"
 }
 
 get_online_ipv6() {
@@ -491,7 +453,7 @@ get_online_ipv6() {
         done
     fi
     
-    read -n1 -rp $"$(get_text "press_key")"
+    read -n1 -rp "$(get_text "press_key")"
 }
 
 # New services status function
@@ -598,7 +560,7 @@ check_services_status() {
     fi
     
     echo -e "${blue}=======================================================${reset}"
-    read -n1 -rp $"$(get_text "press_key")"
+    read -n1 -rp "$(get_text "press_key")"
 }
 
 # Backup & Restore Menu
@@ -613,7 +575,7 @@ print_backup_menu() {
     echo -ne "\nSelect an option: "
 }
 
-backup_system() {
+backup_all() {
     echo -e "${yellow}Creating system backup...${reset}"
     
     # Create backup directory with timestamp
@@ -630,3 +592,725 @@ backup_system() {
             cp "/usr/local/x-ui/bin/config.json" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI config.json${reset}"
         fi
         if [ -d "/usr/local/x-ui/bin/config" ]; then
+            cp -r "/usr/local/x-ui/bin/config" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI config directory${reset}"
+        fi
+        if [ -d "/usr/local/x-ui/db" ]; then
+            cp -r "/usr/local/x-ui/db" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI database${reset}"
+        fi
+        echo -e "${green}X-UI configuration backed up.${reset}"
+    fi
+    
+    # Backup Sing-Box configuration
+    if [ -d "/etc/sing-box" ]; then
+        echo -e "${yellow}Backing up Sing-Box configuration...${reset}"
+        mkdir -p "$backup_dir/sing-box"
+        cp -r "/etc/sing-box" "$backup_dir/" || echo -e "${red}Failed to backup Sing-Box configuration${reset}"
+        echo -e "${green}Sing-Box configuration backed up.${reset}"
+    fi
+    
+    # Backup Marzban configuration
+    if [ -d "/opt/marzban" ]; then
+        echo -e "${yellow}Backing up Marzban configuration...${reset}"
+        mkdir -p "$backup_dir/marzban"
+        cp -r "/opt/marzban" "$backup_dir/" || echo -e "${red}Failed to backup Marzban configuration${reset}"
+        echo -e "${green}Marzban configuration backed up.${reset}"
+    fi
+    
+    # Backup WARP configuration
+    if [ -f "/etc/wireguard/wgcf.conf" ]; then
+        echo -e "${yellow}Backing up WARP configuration...${reset}"
+        mkdir -p "$backup_dir/warp"
+        cp "/etc/wireguard/wgcf.conf" "$backup_dir/warp/" || echo -e "${red}Failed to backup WARP configuration${reset}"
+        if [ -f "/etc/wireguard/proxy.conf" ]; then
+            cp "/etc/wireguard/proxy.conf" "$backup_dir/warp/" || echo -e "${red}Failed to backup WARP proxy configuration${reset}"
+        fi
+        echo -e "${green}WARP configuration backed up.${reset}"
+    fi
+    
+    # Backup HAProxy configuration
+    if [ -f "/etc/haproxy/haproxy.cfg" ]; then
+        echo -e "${yellow}Backing up HAProxy configuration...${reset}"
+        mkdir -p "$backup_dir/haproxy"
+        cp "/etc/haproxy/haproxy.cfg" "$backup_dir/haproxy/" || echo -e "${red}Failed to backup HAProxy configuration${reset}"
+        echo -e "${green}HAProxy configuration backed up.${reset}"
+    fi
+    
+    # Backup RPTraefik configuration
+    if [ -d "/opt/RPTraefik" ]; then
+        echo -e "${yellow}Backing up RPTraefik configuration...${reset}"
+        mkdir -p "$backup_dir/rptraefik"
+        cp -r "/opt/RPTraefik/config" "$backup_dir/rptraefik/" 2>/dev/null || echo -e "${red}Failed to backup RPTraefik configuration${reset}"
+        echo -e "${green}RPTraefik configuration backed up.${reset}"
+    fi
+    
+    # Backup Nebula configuration
+    if [ -d "/etc/nebula" ]; then
+        echo -e "${yellow}Backing up Nebula configuration...${reset}"
+        mkdir -p "$backup_dir/nebula"
+        cp -r "/etc/nebula" "$backup_dir/nebula/" || echo -e "${red}Failed to backup Nebula configuration${reset}"
+        echo -e "${green}Nebula configuration backed up.${reset}"
+    fi
+    
+    # Backup Rathole configuration
+    if [ -f "/etc/rathole/config.toml" ]; then
+        echo -e "${yellow}Backing up Rathole configuration...${reset}"
+        mkdir -p "$backup_dir/rathole"
+        cp "/etc/rathole/config.toml" "$backup_dir/rathole/" || echo -e "${red}Failed to backup Rathole configuration${reset}"
+        echo -e "${green}Rathole configuration backed up.${reset}"
+    fi
+    
+    # Backup Cloudflare Argo configuration
+    if [ -d "/etc/cloudflared" ]; then
+        echo -e "${yellow}Backing up Cloudflare Argo configuration...${reset}"
+        mkdir -p "$backup_dir/cloudflared"
+        cp -r "/etc/cloudflared" "$backup_dir/cloudflared/" || echo -e "${red}Failed to backup Cloudflare Argo configuration${reset}"
+        echo -e "${green}Cloudflare Argo configuration backed up.${reset}"
+    fi
+    
+    # Create backup archive
+    echo -e "${yellow}Creating backup archive...${reset}"
+    tar -czf "${backup_dir}.tar.gz" -C "$(dirname "$backup_dir")" "$(basename "$backup_dir")" || { check_error "Failed to create backup archive"; return; }
+    
+    # Remove the directory to save space, keep only the archive
+    rm -rf "$backup_dir"
+    
+    echo -e "\n${green}Backup completed successfully!${reset}"
+    echo -e "Backup file: ${green}${backup_dir}.tar.gz${reset}"
+    echo -e "Note: To restore from backup, use: tar -xzf ${backup_dir}.tar.gz -C /"
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+backup_xui() {
+    echo -e "${yellow}Backing up X-UI configuration...${reset}"
+    
+    if [ ! -d "/usr/local/x-ui" ]; then
+        echo -e "${red}X-UI not installed. Nothing to backup.${reset}"
+        read -n1 -rp "$(get_text "press_key")"
+        return
+    fi
+    
+    # Create backup directory with timestamp
+    backup_dir="/root/backups/xui_$(date +%Y%m%d_%H%M%S)"
+    mkdir -p "$backup_dir" || { check_error "Failed to create backup directory"; return; }
+    
+    echo -e "Backup directory created: ${green}$backup_dir${reset}"
+    
+    # Backup X-UI configuration
+    mkdir -p "$backup_dir/x-ui"
+    if [ -f "/usr/local/x-ui/bin/config.json" ]; then
+        cp "/usr/local/x-ui/bin/config.json" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI config.json${reset}"
+    fi
+    if [ -d "/usr/local/x-ui/bin/config" ]; then
+        cp -r "/usr/local/x-ui/bin/config" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI config directory${reset}"
+    fi
+    if [ -d "/usr/local/x-ui/db" ]; then
+        cp -r "/usr/local/x-ui/db" "$backup_dir/x-ui/" || echo -e "${red}Failed to backup X-UI database${reset}"
+    fi
+    
+    # Create backup archive
+    echo -e "${yellow}Creating backup archive...${reset}"
+    tar -czf "${backup_dir}.tar.gz" -C "$(dirname "$backup_dir")" "$(basename "$backup_dir")" || { check_error "Failed to create backup archive"; return; }
+    
+    # Remove the directory to save space, keep only the archive
+    rm -rf "$backup_dir"
+    
+    echo -e "\n${green}X-UI backup completed successfully!${reset}"
+    echo -e "Backup file: ${green}${backup_dir}.tar.gz${reset}"
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+backup_tunnels() {
+    echo -e "${yellow}Backing up tunnel configurations...${reset}"
+    
+    # Create backup directory with timestamp
+    backup_dir="/root/backups/tunnels_$(date +%Y%m%d_%H%M%S)"
+    mkdir -p "$backup_dir" || { check_error "Failed to create backup directory"; return; }
+    
+    echo -e "Backup directory created: ${green}$backup_dir${reset}"
+    
+    # Backup HAProxy configuration
+    if [ -f "/etc/haproxy/haproxy.cfg" ]; then
+        echo -e "${yellow}Backing up HAProxy configuration...${reset}"
+        mkdir -p "$backup_dir/haproxy"
+        cp "/etc/haproxy/haproxy.cfg" "$backup_dir/haproxy/" || echo -e "${red}Failed to backup HAProxy configuration${reset}"
+        echo -e "${green}HAProxy configuration backed up.${reset}"
+    fi
+    
+    # Backup RPTraefik configuration
+    if [ -d "/opt/RPTraefik" ]; then
+        echo -e "${yellow}Backing up RPTraefik configuration...${reset}"
+        mkdir -p "$backup_dir/rptraefik"
+        cp -r "/opt/RPTraefik/config" "$backup_dir/rptraefik/" 2>/dev/null || echo -e "${red}Failed to backup RPTraefik configuration${reset}"
+        echo -e "${green}RPTraefik configuration backed up.${reset}"
+    fi
+    
+    # Backup Nebula configuration
+    if [ -d "/etc/nebula" ]; then
+        echo -e "${yellow}Backing up Nebula configuration...${reset}"
+        mkdir -p "$backup_dir/nebula"
+        cp -r "/etc/nebula" "$backup_dir/nebula/" || echo -e "${red}Failed to backup Nebula configuration${reset}"
+        echo -e "${green}Nebula configuration backed up.${reset}"
+    fi
+    
+    # Backup Rathole configuration
+    if [ -f "/etc/rathole/config.toml" ]; then
+        echo -e "${yellow}Backing up Rathole configuration...${reset}"
+        mkdir -p "$backup_dir/rathole"
+        cp "/etc/rathole/config.toml" "$backup_dir/rathole/" || echo -e "${red}Failed to backup Rathole configuration${reset}"
+        echo -e "${green}Rathole configuration backed up.${reset}"
+    fi
+    
+    # Backup Cloudflare Argo configuration
+    if [ -d "/etc/cloudflared" ]; then
+        echo -e "${yellow}Backing up Cloudflare Argo configuration...${reset}"
+        mkdir -p "$backup_dir/cloudflared"
+        cp -r "/etc/cloudflared" "$backup_dir/cloudflared/" || echo -e "${red}Failed to backup Cloudflare Argo configuration${reset}"
+        echo -e "${green}Cloudflare Argo configuration backed up.${reset}"
+    fi
+    
+    # Create backup archive
+    echo -e "${yellow}Creating backup archive...${reset}"
+    tar -czf "${backup_dir}.tar.gz" -C "$(dirname "$backup_dir")" "$(basename "$backup_dir")" || { check_error "Failed to create backup archive"; return; }
+    
+    # Remove the directory to save space, keep only the archive
+    rm -rf "$backup_dir"
+    
+    echo -e "\n${green}Tunnel configurations backup completed successfully!${reset}"
+    echo -e "Backup file: ${green}${backup_dir}.tar.gz${reset}"
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+restore_backup() {
+    echo -e "${yellow}Restore from backup...${reset}"
+    
+    # List available backups
+    echo -e "${blue}Available backups:${reset}"
+    
+    backup_files=( /root/backups/*.tar.gz )
+    if [ ${#backup_files[@]} -eq 0 ] || [ ! -f "${backup_files[0]}" ]; then
+        echo -e "${red}No backup files found in /root/backups/. Operation canceled.${reset}"
+        read -n1 -rp "$(get_text "press_key")"
+        return
+    fi
+    
+    for i in "${!backup_files[@]}"; do
+        echo -e "$((i+1)). ${green}$(basename "${backup_files[$i]}")${reset}"
+    done
+    
+    # Select backup file
+    read -p "Select backup to restore (number): " selection
+    
+    if ! [[ "$selection" =~ ^[0-9]+$ ]] || [ "$selection" -lt 1 ] || [ "$selection" -gt ${#backup_files[@]} ]; then
+        echo -e "${red}Invalid selection. Operation canceled.${reset}"
+        read -n1 -rp "$(get_text "press_key")"
+        return
+    fi
+    
+    selected_backup="${backup_files[$((selection-1))]}"
+    echo -e "${yellow}Selected backup: ${green}$(basename "$selected_backup")${reset}"
+    
+    # Confirm restoration
+    read -p "WARNING: This will overwrite existing configurations. Continue? (y/n): " confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo -e "${yellow}Restoration canceled.${reset}"
+        read -n1 -rp "$(get_text "press_key")"
+        return
+    fi
+    
+    # Extract backup
+    echo -e "${yellow}Extracting backup...${reset}"
+    temp_dir="/tmp/restore_$$"
+    mkdir -p "$temp_dir"
+    
+    tar -xzf "$selected_backup" -C "$temp_dir" || { 
+        check_error "Failed to extract backup"
+        rm -rf "$temp_dir"
+        return
+    }
+    
+    # Find the extracted directory
+    extracted_dir=$(find "$temp_dir" -mindepth 1 -maxdepth 1 -type d | head -1)
+    
+    if [ -z "$extracted_dir" ]; then
+        echo -e "${red}Invalid backup structure. Operation canceled.${reset}"
+        rm -rf "$temp_dir"
+        read -n1 -rp "$(get_text "press_key")"
+        return
+    fi
+    
+    # Restore configurations based on what's in the backup
+    if [ -d "$extracted_dir/x-ui" ]; then
+        echo -e "${yellow}Restoring X-UI configuration...${reset}"
+        
+        # Stop X-UI service if running
+        if systemctl is-active --quiet x-ui; then
+            systemctl stop x-ui
+        fi
+        
+        # Restore config.json
+        if [ -f "$extracted_dir/x-ui/config.json" ] && [ -d "/usr/local/x-ui/bin" ]; then
+            cp "$extracted_dir/x-ui/config.json" "/usr/local/x-ui/bin/" || echo -e "${red}Failed to restore X-UI config.json${reset}"
+        fi
+        
+        # Restore config directory
+        if [ -d "$extracted_dir/x-ui/config" ] && [ -d "/usr/local/x-ui/bin" ]; then
+            cp -r "$extracted_dir/x-ui/config" "/usr/local/x-ui/bin/" || echo -e "${red}Failed to restore X-UI config directory${reset}"
+        fi
+        
+        # Restore database
+        if [ -d "$extracted_dir/x-ui/db" ] && [ -d "/usr/local/x-ui" ]; then
+            cp -r "$extracted_dir/x-ui/db" "/usr/local/x-ui/" || echo -e "${red}Failed to restore X-UI database${reset}"
+        fi
+        
+        # Start X-UI service
+        if systemctl is-enabled --quiet x-ui; then
+            systemctl start x-ui
+        fi
+        
+        echo -e "${green}X-UI configuration restored.${reset}"
+    fi
+    
+    # Restore HAProxy configuration
+    if [ -d "$extracted_dir/haproxy" ] && [ -f "$extracted_dir/haproxy/haproxy.cfg" ]; then
+        echo -e "${yellow}Restoring HAProxy configuration...${reset}"
+        
+        # Stop HAProxy service if running
+        if systemctl is-active --quiet haproxy; then
+            systemctl stop haproxy
+        fi
+        
+        cp "$extracted_dir/haproxy/haproxy.cfg" "/etc/haproxy/" || echo -e "${red}Failed to restore HAProxy configuration${reset}"
+        
+        # Start HAProxy service
+        if systemctl is-enabled --quiet haproxy; then
+            systemctl start haproxy
+        fi
+        
+        echo -e "${green}HAProxy configuration restored.${reset}"
+    fi
+    
+    # Restore RPTraefik configuration
+    if [ -d "$extracted_dir/rptraefik" ] && [ -d "$extracted_dir/rptraefik/config" ]; then
+        echo -e "${yellow}Restoring RPTraefik configuration...${reset}"
+        
+        # Stop RPTraefik service if running
+        if systemctl is-active --quiet rptraefik; then
+            systemctl stop rptraefik
+        fi
+        
+        if [ -d "/opt/RPTraefik" ]; then
+            cp -r "$extracted_dir/rptraefik/config" "/opt/RPTraefik/" || echo -e "${red}Failed to restore RPTraefik configuration${reset}"
+        fi
+        
+        # Start RPTraefik service
+        if systemctl is-enabled --quiet rptraefik; then
+            systemctl start rptraefik
+        fi
+        
+        echo -e "${green}RPTraefik configuration restored.${reset}"
+    fi
+    
+    # Add more restoration logic for other services as needed
+    
+    # Clean up
+    rm -rf "$temp_dir"
+    
+    echo -e "\n${green}Restoration completed successfully!${reset}"
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+# Uninstall menu
+print_uninstall_menu() {
+    clear
+    echo -e "${blue}==================== Uninstall Menu ====================${reset}"
+    echo -e "1. Uninstall X-UI Panel"
+    echo -e "2. Uninstall WARP"
+    echo -e "3. Uninstall WARP Socks5"
+    echo -e "4. Uninstall HAProxy Tunnel"
+    echo -e "5. Uninstall RPTraefik Tunnel"
+    echo -e "6. Uninstall Nebula Tunnel"
+    echo -e "7. Uninstall Rathole Tunnel"
+    echo -e "8. Uninstall Cloudflare Argo Tunnel"
+    echo -e "9. Uninstall Sing-Box"
+    echo -e "10. Uninstall Marzban Panel"
+    echo -e "11. Return to Main Menu"
+    echo -ne "\nSelect an option: "
+}
+
+uninstall_xui() {
+    echo -e "${yellow}Uninstalling X-UI Panel...${reset}"
+    
+    if [ -f "/usr/local/x-ui/x-ui.sh" ]; then
+        /usr/local/x-ui/x-ui.sh uninstall
+        check_error "Failed to uninstall X-UI Panel"
+    else
+        echo -e "${red}X-UI Panel not found or already uninstalled.${reset}"
+    fi
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+uninstall_warp() {
+    echo -e "${yellow}Uninstalling WARP...${reset}"
+    
+    if command -v warp &>/dev/null; then
+        warp u
+        check_error "Failed to uninstall WARP"
+    else
+        echo -e "${red}WARP not found or already uninstalled.${reset}"
+    fi
+    
+    # Clean up WARP monitor service if it exists
+    if [ -f "/etc/systemd/system/monitor-wireproxy.service" ]; then
+        echo -e "${yellow}Removing WARP monitor service...${reset}"
+        systemctl stop monitor-wireproxy
+        systemctl disable monitor-wireproxy
+        rm -f /etc/systemd/system/monitor-wireproxy.service
+        rm -f /root/monitor_wireproxy.sh
+        systemctl daemon-reload
+    fi
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+uninstall_warp_socks5() {
+    echo -e "${yellow}Uninstalling WARP Socks5 Proxy...${reset}"
+    
+    if systemctl is-active --quiet warp-svc; then
+        systemctl stop warp-svc
+        systemctl disable warp-svc
+        
+        if command -v warp-cli &>/dev/null; then
+            warp-cli disconnect
+            warp-cli disable-always-on
+            warp-cli delete
+        fi
+        
+        # Remove WARP packages
+        apt-get remove -y cloudflare-warp || true
+        
+        echo -e "${green}WARP Socks5 Proxy has been uninstalled.${reset}"
+    else
+        echo -e "${red}WARP Socks5 Proxy not found or already uninstalled.${reset}"
+    fi
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+uninstall_haproxy() {
+    echo -e "${yellow}Uninstalling HAProxy Tunnel...${reset}"
+    
+    if systemctl is-active --quiet haproxy; then
+        systemctl stop haproxy
+        systemctl disable haproxy
+        apt-get remove -y haproxy
+        apt-get autoremove -y
+        
+        echo -e "${green}HAProxy Tunnel has been uninstalled.${reset}"
+    else
+        echo -e "${red}HAProxy Tunnel not found or already uninstalled.${reset}"
+    fi
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+uninstall_rptraefik() {
+    echo -e "${yellow}Uninstalling RPTraefik Tunnel...${reset}"
+    
+    if [ -d "/opt/RPTraefik" ]; then
+        if [ -f "/opt/RPTraefik/uninstall.sh" ]; then
+            bash /opt/RPTraefik/uninstall.sh
+        else
+            # Fallback if uninstall script doesn't exist
+            if systemctl is-active --quiet rptraefik; then
+                systemctl stop rptraefik
+                systemctl disable rptraefik
+            fi
+            rm -rf /opt/RPTraefik
+        fi
+        
+        echo -e "${green}RPTraefik Tunnel has been uninstalled.${reset}"
+    else
+        echo -e "${red}RPTraefik Tunnel not found or already uninstalled.${reset}"
+    fi
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+uninstall_nebula() {
+    echo -e "${yellow}Uninstalling Nebula Tunnel...${reset}"
+    
+    if systemctl is-active --quiet nebula; then
+        systemctl stop nebula
+        systemctl disable nebula
+        
+        # Remove Nebula files
+        rm -rf /etc/nebula
+        rm -f /usr/local/bin/nebula
+        
+        echo -e "${green}Nebula Tunnel has been uninstalled.${reset}"
+    else
+        echo -e "${red}Nebula Tunnel not found or already uninstalled.${reset}"
+    fi
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+# System monitoring menu
+print_monitor_menu() {
+    clear
+    echo -e "${blue}==================== System Monitoring ====================${reset}"
+    echo -e "1. Monitor CPU Usage"
+    echo -e "2. Monitor Memory Usage"
+    echo -e "3. Monitor Disk Usage"
+    echo -e "4. Monitor Network Traffic"
+    echo -e "5. Monitor Active Connections"
+    echo -e "6. Show System Info"
+    echo -e "7. Return to Main Menu"
+    echo -ne "\nSelect an option: "
+}
+
+monitor_cpu() {
+    echo -e "${yellow}Monitoring CPU usage (press Ctrl+C to exit)...${reset}"
+    top -bn 1 | head -20
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+monitor_memory() {
+    echo -e "${yellow}Current Memory Usage:${reset}"
+    free -h
+    
+    echo -e "\n${yellow}Top memory-consuming processes:${reset}"
+    ps aux --sort=-%mem | head -11
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+monitor_disk() {
+    echo -e "${yellow}Current Disk Usage:${reset}"
+    df -h
+    
+    echo -e "\n${yellow}Largest directories in root:${reset}"
+    du -h --max-depth=1 / 2>/dev/null | sort -hr | head -10
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+monitor_network() {
+    echo -e "${yellow}Current Network Interfaces:${reset}"
+    ip -c a
+    
+    echo -e "\n${yellow}Network Statistics:${reset}"
+    netstat -tuln
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+monitor_connections() {
+    echo -e "${yellow}Active connections (press Ctrl+C to exit)...${reset}"
+    
+    echo -e "\n${yellow}Active connections count per IP:${reset}"
+    netstat -ntu | grep ESTABLISHED | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head -10
+    
+    echo -e "\n${yellow}Total active connections: ${green}$(netstat -ntu | grep ESTABLISHED | wc -l)${reset}"
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+show_system_info() {
+    echo -e "${yellow}System Information:${reset}"
+    
+    # OS Info
+    echo -e "\n${blue}OS Information:${reset}"
+    cat /etc/os-release | grep -E "^(NAME|VERSION)="
+    
+    # CPU Info
+    echo -e "\n${blue}CPU Information:${reset}"
+    lscpu | grep -E "Model name|^CPU\(s\)"
+    
+    # Memory Info
+    echo -e "\n${blue}Memory Information:${reset}"
+    free -h | grep -E "Mem|Swap"
+    
+    # Disk Info
+    echo -e "\n${blue}Disk Information:${reset}"
+    df -h | grep -v "tmpfs"
+    
+    # Kernel Info
+    echo -e "\n${blue}Kernel Information:${reset}"
+    uname -a
+    
+    # Uptime
+    echo -e "\n${blue}System Uptime:${reset}"
+    uptime
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+# Security menu
+print_security_menu() {
+    clear
+    echo -e "${blue}==================== Security Menu ====================${reset}"
+    echo -e "1. Change SSH Port"
+    echo -e "2. Setup Basic Firewall"
+    echo -e "3. Configure Fail2Ban"
+    echo -e "4. Update SSL Certificate"
+    echo -e "5. Return to Main Menu"
+    echo -ne "\nSelect an option: "
+}
+
+change_ssh_port() {
+    echo -e "${yellow}Changing SSH Port...${reset}"
+    
+    current_port=$(grep "^Port " /etc/ssh/sshd_config | awk '{print $2}')
+    if [ -z "$current_port" ]; then
+        current_port="22 (default)"
+    fi
+    
+    echo -e "Current SSH port: ${green}$current_port${reset}"
+    read -p "Enter new SSH port (1024-65535): " new_port
+    
+    # Validate port number
+    if ! [[ "$new_port" =~ ^[0-9]+$ ]] || [ "$new_port" -lt 1024 ] || [ "$new_port" -gt 65535 ]; then
+        echo -e "${red}Invalid port number. Must be between 1024 and 65535.${reset}"
+        read -n1 -rp "$(get_text "press_key")"
+        return
+    fi
+    
+    # Backup sshd_config
+    cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak.$(date +%Y%m%d%H%M%S)
+    
+    # Update SSH port
+    if grep -q "^Port " /etc/ssh/sshd_config; then
+        sed -i "s/^Port .*/Port $new_port/" /etc/ssh/sshd_config
+    else
+        echo "Port $new_port" >> /etc/ssh/sshd_config
+    fi
+    
+    # Restart SSH service
+    systemctl restart sshd
+    
+    echo -e "${green}SSH port changed to $new_port.${reset}"
+    echo -e "${yellow}IMPORTANT: Make sure to connect using the new port from now on!${reset}"
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+setup_firewall() {
+    echo -e "${yellow}Setting up basic firewall...${reset}"
+    
+    # Install ufw if not already installed
+    if ! command -v ufw &>/dev/null; then
+        echo -e "${yellow}Installing UFW firewall...${reset}"
+        apt-get update
+        apt-get install -y ufw
+    fi
+    
+    # Reset UFW to default
+    ufw --force reset
+    
+    # Set default policies
+    ufw default deny incoming
+    ufw default allow outgoing
+    
+    # Get current SSH port
+    ssh_port=$(grep "^Port " /etc/ssh/sshd_config | awk '{print $2}')
+    if [ -z "$ssh_port" ]; then
+        ssh_port=22
+    fi
+    
+    # Allow SSH
+    ufw allow $ssh_port/tcp
+    
+    # Get X-UI port if installed
+    x_ui_port=$(grep "port" /usr/local/x-ui/bin/config.json 2>/dev/null | grep -o '[0-9]\+' | head -1)
+    if [ -n "$x_ui_port" ]; then
+        echo -e "${yellow}Allowing X-UI panel port: $x_ui_port${reset}"
+        ufw allow $x_ui_port/tcp
+    fi
+    
+    # Allow common ports
+    echo -e "${yellow}Allowing common ports: 80/tcp (HTTP), 443/tcp (HTTPS)${reset}"
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+    
+    # Enable UFW
+    echo -e "${yellow}Enabling UFW...${reset}"
+    ufw --force enable
+    
+    echo -e "${green}Basic firewall setup completed.${reset}"
+    echo -e "Allowed ports: SSH ($ssh_port/tcp), HTTP (80/tcp), HTTPS (443/tcp)"
+    if [ -n "$x_ui_port" ]; then
+        echo -e "              X-UI Panel ($x_ui_port/tcp)"
+    fi
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+configure_fail2ban() {
+    echo -e "${yellow}Installing and configuring Fail2Ban...${reset}"
+    
+    # Install Fail2Ban
+    apt-get update
+    apt-get install -y fail2ban
+    
+    # Create custom SSH jail config
+    cat > /etc/fail2ban/jail.d/sshd.conf << EOF
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 5
+findtime = 300
+bantime = 3600
+EOF
+    
+    # Restart Fail2Ban
+    systemctl restart fail2ban
+    
+    echo -e "${green}Fail2Ban has been configured to protect SSH.${reset}"
+    echo -e "Settings:"
+    echo -e "  - Max retries: 5"
+    echo -e "  - Find time: 300 seconds (5 minutes)"
+    echo -e "  - Ban time: 3600 seconds (1 hour)"
+    
+    read -n1 -rp "$(get_text "press_key")"
+}
+
+# Install Sing-Box Core function
+install_singbox() {
+    echo -e "${yellow}Installing Sing-Box Core...${reset}"
+    
+    # Install dependencies
+    install_dependencies curl jq || { check_error "Failed to install dependencies"; return; }
+    
+    # Get the latest version from GitHub
+    echo -e "${yellow}Getting latest Sing-Box version...${reset}"
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r .tag_name)
+    
+    if [ -z "$LATEST_VERSION" ]; then
+        echo -e "${red}Failed to get the latest version. Please check your internet connection.${reset}"
+        read -n1 -rp "$(get_text "press_key")"
+        return
+    fi
+    
+    echo -e "Latest version: ${green}$LATEST_VERSION${reset}"
+    
+    # Determine system architecture
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64) ARCH="amd64" ;;
+        aarch64) ARCH="arm64" ;;
+        armv7l) ARCH="armv7" ;;
+        *) echo -e "${red}Unsupported architecture: $ARCH${reset}"; read -n1 -rp "$(get_text "press_key")"; return ;;
+    esac
+    
+    # Download Sing-Box
+    DOWNLOAD_URL="https://github.com/SagerNet/sing-box/releases/download/${LATEST_VERSION}/sing-box-${LATEST_VERSION#v}-linux-${ARCH}.tar.gz"
+    
+    echo -e "${yellow}Downloading Sing-Box...${reset}"
+    wget -O /tmp/sing-box.tar.gz $DOWNLOAD_URL || { check_error "Failed to download Sing-Box"; return; }
