@@ -189,14 +189,3 @@ bash <(curl -Ls https://raw.githubusercontent.com/Moriistar/ServerStar/main/inst
 
 </div>
 ```
-
-This README format follows a clean, professional style similar to the example you shared. It includes:
-
-1. Bilingual introduction sections (English and Persian)
-2. Quick installation commands
-3. Key features overview
-4. Complete list of menu options organized by category
-5. System requirements
-6. Contact information
-
-The layout uses proper markdown formatting with clear headings, code blocks, and directional text control for Persian content. The content is concise yet informative, focusing on introducing the script and explaining its capabilities.
