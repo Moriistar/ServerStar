@@ -31,7 +31,7 @@ sleep 2
 
 print_menu() {
   clear
-  echo -e "${blue}=======🅂🄴🅁🅅🄴🅁 🅂🅃🄰🅁=======${reset}"
+  echo -e "${blue}==================== 🅂🄴🅁🅅🄴🅁 🅂🅃🄰🅁 ====================${reset}"
   echo -e "1. Update & Install X-UI Prerequisites"
   echo -e "2. Obtain SSL Certificate (Let's Encrypt)"
   echo -e "3. Install X-UI Panel (MHSanaei)"
@@ -695,4 +695,4 @@ while true; do
   esac
 done
 
-clear && echo -e "${green}Exited ServerStar Menu.${reset}" 
+clear && echo -e "${green}Exited ServerStar Menu.${reset}"
