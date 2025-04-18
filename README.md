@@ -188,4 +188,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/Moriistar/ServerStar/main/inst
 - 📂 **مخزن گیت‌هاب**: [Moriistar/ServerStar](https://github.com/Moriistar/ServerStar)
 
 </div>
-```
+---
+
+## 🖼️ PANEL STAR Menu Preview | نمای منوی پنل استار
+
+![PANEL STAR Menu](https://page.genspark.site/v1/base64_upload/12161e0f191e42824edc71d91e051940)
