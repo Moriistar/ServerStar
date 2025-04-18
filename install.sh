@@ -39,7 +39,7 @@ print_menu() {
   echo -e "5. Install Alireza X-UI Panel (v1.8.9)"
   echo -e "6. Install TX-UI Theme"
   echo -e "7. Install Automatic Backup (AC_Lover)"
-  echo -e "8. Install Haproxy Tunnel (IPv4/IPv6)"
+  echo -e "8. Install Haproxy Tunnel"
   echo -e "9. Install Nebula Tunnel"
   echo -e "10. Optimize Xray with WARP"
   echo -e "11. Telegram Monitor"
@@ -47,7 +47,10 @@ print_menu() {
   echo -e "13. Generate Random Local IPv6"
   echo -e "14. Manual Tunnel Setup (Input IP)"
   echo -e "15. Fix WARP (fscarmen + Memory Monitor)"
-  echo -e "16. Exit"
+  echo -e "${green}16. Install RPTraefik Tunnel ${yellow}[NEW]${reset}"
+  echo -e "${green}17. Install WARP Socks5 Proxy ${yellow}[NEW]${reset}"
+  echo -e "${green}18. Get Local IPv6 from Website ${yellow}[NEW]${reset}"
+  echo -e "19. Exit"
   echo -ne "\nSelect an option: "
 }
 
@@ -240,7 +243,101 @@ EOF
     systemctl start monitor-wireproxy
 
     echo -e "\n✅ Operation completed successfully. wireproxy RAM monitor service is active."
-} 
+}
+
+# New function: Install RPTraefik Tunnel
+install_rptraefik() {
+    echo -e "${yellow}Installing RPTraefik Tunnel...${reset}"
+    echo -e "This will install RPTraefik Tunnel from dev-ir repository."
+    
+    # Check if git is installed
+    if ! command -v git &> /dev/null; then
+        echo -e "${yellow}Git is not installed. Installing git...${reset}"
+        sudo apt-get update
+        sudo apt-get install -y git
+    fi
+    
+    echo -e "${yellow}Cloning RPTraefik repository and starting installation...${reset}"
+    sudo git clone https://github.com/dev-ir/RPTraefik.git /opt/RPTraefik && cd /opt/RPTraefik && bash main.sh
+    
+    echo -e "${green}RPTraefik Tunnel installation completed.${reset}"
+    read -n1 -rp $'Press any key to return to menu...'
+}
+
+# New function: Install WARP Socks5 Proxy
+install_warp_socks5() {
+    echo -e "${yellow}Installing WARP Socks5 Proxy...${reset}"
+    echo -e "This will install WARP Socks5 Proxy on port 40000."
+    
+    # Install WARP Socks5 Proxy
+    bash <(curl -sSL https://raw.githubusercontent.com/hamid-gh98/x-ui-scripts/main/install_warp_proxy.sh)
+    
+    echo -e "\n${green}WARP Socks5 Proxy has been installed.${reset}"
+    echo -e "\n${yellow}Configuration Instructions for X-UI:${reset}"
+    echo -e "1. Add the following at the end of your outbounds section:"
+    echo -e "${blue}"
+    echo '"tag": "WARP",'
+    echo '"protocol": "socks",'
+    echo '"settings": {'
+    echo '  "servers": ['
+    echo '    {'
+    echo '      "address": "127.0.0.1",'
+    echo '      "port": 40000'
+    echo '    }'
+    echo '  ]'
+    echo '}'
+    echo '}'
+    echo -e "${reset}"
+    
+    echo -e "2. Add the following at the end of your routing rules:"
+    echo -e "${blue}"
+    echo '"type": "field",'
+    echo '"outboundTag": "WARP",'
+    echo '"domain": ['
+    echo '  "cloudflare.com",'
+    echo '  "iran.ir"'
+    echo ']'
+    echo '}'
+    echo -e "${reset}"
+    
+    echo -e "${yellow}NOTE: To use WARP+, run 'warp a' and select option 2.${reset}"
+    
+    read -n1 -rp $'Press any key to return to menu...'
+}
+
+# New function: Get Local IPv6 from Website
+get_online_ipv6() {
+    echo -e "${yellow}Fetching Local IPv6 from unique-local-ipv6.com...${reset}"
+    
+    # Check if curl is installed
+    if ! command -v curl &> /dev/null; then
+        echo -e "${yellow}Curl is not installed. Installing curl...${reset}"
+        sudo apt-get update
+        sudo apt-get install -y curl
+    fi
+    
+    # Get the IPv6 address from the website
+    echo -e "${yellow}Retrieving Local IPv6 addresses...${reset}"
+    
+    # Use curl to get the page content and extract the IPv6 addresses
+    local webpage=$(curl -s https://unique-local-ipv6.com/)
+    
+    # Extract the IPv6 addresses using grep
+    if [[ -n "$webpage" ]]; then
+        echo -e "${green}Retrieved Local IPv6 addresses:${reset}"
+        echo -e "${blue}---------------------------------------${reset}"
+        echo "$webpage" | grep -o "fd[0-9a-f]\{2\}:[0-9a-f]\{4\}:[0-9a-f]\{4\}:[0-9a-f]\{4\}::/64" | head -5
+        echo -e "${blue}---------------------------------------${reset}"
+    else
+        echo -e "${red}Failed to retrieve IPv6 addresses from the website.${reset}"
+        echo -e "${yellow}Generating backup random local IPv6 addresses:${reset}"
+        for i in {1..3}; do
+            printf "fd%02x:%04x:%04x:%04x::/64\n" $((RANDOM%256)) $((RANDOM%65536)) $((RANDOM%65536)) $((RANDOM%65536))
+        done
+    fi
+    
+    read -n1 -rp $'Press any key to return to menu...'
+}
 
 # Menu loop
 while true; do
@@ -262,9 +359,12 @@ while true; do
     13) generate_ipv6 ;;
     14) manual_tunnel_setup ;;
     15) fix_warp_fscarmen ;;
-    16) break ;;
+    16) install_rptraefik ;;        # New option
+    17) install_warp_socks5 ;;      # New option
+    18) get_online_ipv6 ;;          # New option
+    19) break ;;
     *) echo -e "${red}Invalid option!${reset}"; sleep 1 ;;
   esac
 done
 
-clear && echo -e "${green}Exited ServerStar Menu.${reset}"
+clear && echo -e "${green}Exited ServerStar Menu.${reset}" 
