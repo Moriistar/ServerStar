@@ -31,11 +31,7 @@ sleep 2
 
 print_menu() {
   clear
-  echo -e "${blue}==== ____                           ____  _             
-/ ___|  ___ _ ____   _____ _ __/ ___|| |_ __ _ _ __ 
-\___ \ / _ \ '__\ \ / / _ \ '__\___ \| __/ _` | '__|
- ___) |  __/ |   \ V /  __/ |   ___) | || (_| | |   
-|____/ \___|_|    \_/ \___|_|  |____/ \__\__,_|_|   ====${reset}"
+  echo -e "${blue}=======🅂🄴🅁🅅🄴🅁 🅂🅃🄰🅁=======${reset}"
   echo -e "1. Update & Install X-UI Prerequisites"
   echo -e "2. Obtain SSL Certificate (Let's Encrypt)"
   echo -e "3. Install X-UI Panel (MHSanaei)"
