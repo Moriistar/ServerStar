@@ -39,3 +39,47 @@ bash <(curl -Ls https://raw.githubusercontent.com/Moriistar/ServerStar/main/inst
 
 برای پشتیبانی، به کانال تلگرام ما بپیوندید:
 - [@ServerStar_ir](https://t.me/ServerStar_ir)
+
+---
+
+# ServerStar Panel
+
+Comprehensive management script for X-UI servers with advanced tunneling, monitoring, and security features.
+
+## Quick Installation
+
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/Moriistar/ServerStar/main/install.sh)
+```
+
+## Features
+
+1. **Update & Install X-UI Prerequisites**
+2. **Obtain SSL Certificate (Let's Encrypt)**
+3. **Install X-UI Panel (MHSanaei)**
+4. **Install TX-UI Panel (AghayeCoder)**
+5. **Install Alireza X-UI Panel (v1.8.9)**
+6. **Install TX-UI Theme**
+7. **Install Automatic Backup (AC_Lover)**
+8. **Install Haproxy Tunnel (IPv4/IPv6)**
+9. **Install Nebula Tunnel**
+10. **Optimize Xray with WARP**
+11. **Telegram Monitor**
+12. **Detect Server Location**
+13. **Generate Random Local IPv6**
+14. **Manual Tunnel Setup (Input IP)**
+15. **Fix WARP (fscarmen + Memory Monitor)**
+16. **Install RPTraefik Tunnel**
+17. **Install WARP Socks5 Proxy**
+18. **Get Local IPv6 from Website**
+19. **Check Services Status**
+20. **Backup System**
+21. **Uninstall Menu**
+22. **Monitor System Resources**
+23. **Security Menu**
+24. **Check for Script Updates**
+
+## Support
+
+For support, join our Telegram channel:
+- [@ServerStar_ir](https://t.me/ServerStar_ir)
