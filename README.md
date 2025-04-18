@@ -1,140 +1,155 @@
-اینجا فایل کامل دوزبانه README.md به‌روزرسانی‌شده رو برات به‌صورت کد می‌فرستم تا بتونی راحت ویرایشش کنی:
+# توضیحات گزینه‌های پنل استار (PANEL STAR)
 
-# ⭐ ServerStar Panel | پنل سرور استار
+## 🇺🇸 English Descriptions
 
-A powerful all-in-one bash script to manage X-UI panels, tunnels, system optimization, and advanced features — now with bilingual support and user-friendly interface.
+1. **Update & Install X-UI Prerequisites**
+   - Updates system packages and installs essential prerequisites needed for X-UI panel installation.
 
-یک اسکریپت قدرتمند همه‌کاره برای مدیریت پنل‌های X-UI، تونل‌ها، بهینه‌سازی سیستم و امکانات پیشرفته — اکنون با پشتیبانی دوزبانه و رابط کاربری آسان.
+2. **Obtain SSL Certificate (Let's Encrypt)**
+   - Acquires free SSL certificates from Let's Encrypt for your domain to enable HTTPS connections.
 
----
+3. **Install X-UI Panel (MHSanaei)**
+   - Installs MHSanaei's version of X-UI panel, a popular Xray-based user interface for VPN management.
 
-## 🚀 Quick Installation | نصب سریع
+4. **Install TX-UI Panel (AghayeCoder)**
+   - Installs AghayeCoder's TX-UI panel, an alternative interface with additional features.
 
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/Moriistar/ServerStar/main/install.sh)
+5. **Install Alireza X-UI Panel (v1.8.9)**
+   - Installs Alireza's version 1.8.9 of X-UI panel with its specific enhancements.
 
+6. **Install TX-UI Theme**
+   - Installs custom themes for the TX-UI panel to enhance visual appearance.
 
----
+7. **Install Automatic Backup (AC_Lover)**
+   - Sets up automated backup system by AC_Lover to safeguard your configuration data.
 
-🌟 Features | امکانات
+8. **Install Haproxy Tunnel**
+   - Implements Haproxy tunnel, a high-performance TCP/HTTP load balancer for traffic routing.
 
-Core Features | ویژگی‌های اصلی
+9. **Install Nebula Tunnel**
+   - Configures Nebula, a scalable overlay networking tool for secure connection between nodes.
 
-✅ Update & Install X-UI Prerequisites
-به‌روزرسانی و نصب پیش‌نیازهای X-UI
+10. **Optimize Xray with WARP**
+    - Enhances Xray performance by integrating with Cloudflare WARP for improved connectivity.
 
-✅ Obtain SSL Certificate (Let's Encrypt)
-دریافت گواهی SSL به‌صورت خودکار
+11. **Telegram Monitor**
+    - Sets up a monitoring system that sends server status notifications via Telegram.
 
-✅ Install X-UI Panels: MHSanaei, TX-UI, Alireza
-نصب انواع پنل X-UI (نسخه‌های مختلف)
+12. **Detect Server Location**
+    - Identifies and displays the geographical location of your server.
 
-✅ Install TX-UI Theme
-نصب قالب‌های حرفه‌ای TX-UI
+13. **Generate Random Local IPv6**
+    - Creates random local IPv6 addresses (fd00::/8) for internal networking.
 
-✅ Install Automatic Backup (AC_Lover)
-پشتیبان‌گیری خودکار از تنظیمات و پیکربندی‌ها
+14. **Manual Tunnel Setup (Input IP)**
+    - Configures tunnel manually by specifying IPv4 and IPv6 addresses.
 
+15. **Fix WARP (fscarmen + Memory Monitor)**
+    - Resolves WARP-related issues and implements memory monitoring to prevent crashes.
 
-Tunneling Options | گزینه‌های تونل‌سازی
+16. **Install RPTraefik Tunnel**
+    - Installs RPTraefik tunnel solution for advanced traffic routing and load balancing.
 
-🔄 Install Haproxy Tunnel (IPv4/IPv6)
-تونل Haproxy برای دور زدن محدودیت‌ها
+17. **Install WARP Socks5 Proxy**
+    - Sets up a WARP-based Socks5 proxy on port 40000 for enhanced connectivity.
 
-🌐 Install Nebula Tunnel
-تونل مش امن Nebula برای شبکه‌سازی داخلی
+18. **Get Local IPv6 from Website**
+    - Retrieves local IPv6 addresses from online services for networking setup.
 
-🧬 Install RPTraefik Tunnel
-تونل پیشرفته RPTraefik با قابلیت تنظیم دامنه
+19. **Optimize Network Parameters**
+    - Tunes system network parameters for improved performance and throughput.
 
-🧦 Install WARP Socks5 Proxy
-نصب وارپ به صورت پروکسی SOCKS5 روی پورت 40000
+20. **Install Server Monitoring**
+    - Implements comprehensive server monitoring tools for resource tracking.
 
-🔗 Manual Tunnel Setup (Input IP)
-تنظیم تونل دستی با آی‌پی دلخواه
+21. **Setup Secure DNS (DoH/DoT)**
+    - Configures encrypted DNS using DoH/DoT protocols for enhanced privacy and security.
 
+22. **Setup Advanced Backup System**
+    - Implements a robust backup solution with scheduling and retention policies.
 
-Networking Tools | ابزارهای شبکه
+23. **Configure Server Firewall**
+    - Sets up UFW firewall with custom rules to protect your server from unauthorized access.
 
-🌍 Detect Server Location
-شناسایی موقعیت مکانی و شبکه‌ای سرور
+24. **Update PANEL STAR Script**
+    - Updates the PANEL STAR script to the latest version with new features and fixes.
 
-🔄 Generate Random Local IPv6
-تولید تصادفی آدرس IPv6 محلی
+25. **Exit**
+    - Exits the PANEL STAR menu.
 
-🌐 Get Local IPv6 from Website
-دریافت IPv6 لوکال از وب‌سایت unique-local-ipv6.com
+## 🇮🇷 توضیحات فارسی
 
-⚙️ Optimize Network Parameters
-بهینه‌سازی عملکرد شبکه برای سرعت و پایداری بیشتر
+1. **به‌روزرسانی و نصب پیش‌نیازهای X-UI**
+   - بسته‌های سیستم را به‌روز می‌کند و پیش‌نیازهای ضروری برای نصب پنل X-UI را نصب می‌کند.
 
-🔧 Optimize Xray with WARP
-افزایش سرعت و اتصال با ادغام WARP
+2. **دریافت گواهی SSL (Let's Encrypt)**
+   - گواهی‌های SSL رایگان را از Let's Encrypt برای دامنه شما دریافت می‌کند تا اتصالات HTTPS را فعال کند.
 
+3. **نصب پنل X-UI (MHSanaei)**
+   - نسخه MHSanaei از پنل X-UI، یک رابط کاربری محبوب مبتنی بر Xray برای مدیریت VPN را نصب می‌کند.
 
-System & Security Tools | ابزارهای سیستمی و امنیتی
+4. **نصب پنل TX-UI (AghayeCoder)**
+   - پنل TX-UI اقای کودر را که یک رابط جایگزین با ویژگی‌های اضافی است، نصب می‌کند.
 
-🔒 Setup Secure DNS (DoH/DoT)
-نصب DNS امن رمزگذاری شده
+5. **نصب پنل X-UI علیرضا (نسخه ۱.۸.۹)**
+   - نسخه ۱.۸.۹ پنل X-UI علیرضا را با بهبودهای خاص آن نصب می‌کند.
 
-🛡️ Configure Server Firewall
-پیکربندی فایروال برای افزایش امنیت
+6. **نصب قالب TX-UI**
+   - قالب‌های سفارشی برای پنل TX-UI را برای بهبود ظاهر بصری نصب می‌کند.
 
-📦 Setup Advanced Backup System
-راه‌اندازی بکاپ حرفه‌ای با ذخیره‌سازی ابری
+7. **نصب پشتیبان‌گیری خودکار (AC_Lover)**
+   - سیستم پشتیبان‌گیری خودکار توسط AC_Lover را برای محافظت از داده‌های پیکربندی شما راه‌اندازی می‌کند.
 
-📊 Install Server Monitoring
-مانیتورینگ کامل منابع و وضعیت سرور
+8. **نصب تانل Haproxy**
+   - تانل Haproxy، یک متعادل‌کننده بار TCP/HTTP با کارایی بالا برای مسیریابی ترافیک را پیاده‌سازی می‌کند.
 
-⚠️ Fix WARP (fscarmen + Memory Monitor)
-رفع مشکلات وارپ و نظارت بر مصرف رم wireproxy
+9. **نصب تانل Nebula**
+   - Nebula، یک ابزار شبکه‌سازی روکش مقیاس‌پذیر برای اتصال امن بین گره‌ها را پیکربندی می‌کند.
 
+10. **بهینه‌سازی Xray با WARP**
+    - با ادغام Cloudflare WARP، عملکرد Xray را برای بهبود اتصال ارتقا می‌دهد.
 
+11. **مانیتورینگ تلگرام**
+    - سیستم نظارتی که اعلان‌های وضعیت سرور را از طریق تلگرام ارسال می‌کند، راه‌اندازی می‌کند.
 
----
+12. **تشخیص موقعیت سرور**
+    - موقعیت جغرافیایی سرور شما را شناسایی و نمایش می‌دهد.
 
-📜 Menu Preview | پیش‌نمایش منوی اسکریپت
+13. **تولید IPv6 محلی تصادفی**
+    - آدرس‌های IPv6 محلی تصادفی (fd00::/8) برای شبکه داخلی ایجاد می‌کند.
 
-==================== ServerStar Menu ====================
-1.  Update & Install X-UI Prerequisites
-2.  Obtain SSL Certificate (Let's Encrypt)
-3.  Install X-UI Panel (MHSanaei)
-4.  Install TX-UI Panel (AghayeCoder)
-5.  Install Alireza X-UI Panel (v1.8.9)
-6.  Install TX-UI Theme
-7.  Install Automatic Backup (AC_Lover)
-8.  Install Haproxy Tunnel
-9.  Install Nebula Tunnel
-10. Optimize Xray with WARP
-11. Telegram Monitor
-12. Detect Server Location
-13. Generate Random Local IPv6
-14. Manual Tunnel Setup (Input IP)
-15. Fix WARP (fscarmen + Memory Monitor)
-16. Install RPTraefik Tunnel [NEW]
-17. Install WARP Socks5 Proxy [NEW]
-18. Get Local IPv6 from Website [NEW]
-19. Optimize Network Parameters [NEW]
-20. Install Server Monitoring [NEW]
-21. Setup Secure DNS (DoH/DoT) [NEW]
-22. Setup Advanced Backup System [NEW]
-23. Configure Server Firewall [NEW]
-24. Update PANEL STAR Script [NEW]
-25. Exit
+14. **راه‌اندازی دستی تانل (ورود IP)**
+    - با مشخص کردن آدرس‌های IPv4 و IPv6، تانل را به صورت دستی پیکربندی می‌کند.
 
+15. **رفع مشکل WARP (fscarmen + نظارت حافظه)**
+    - مشکلات مربوط به WARP را برطرف می‌کند و نظارت بر حافظه را برای جلوگیری از خرابی‌ها پیاده‌سازی می‌کند.
 
----
+16. **نصب تانل RPTraefik**
+    - راه‌حل تانل RPTraefik را برای مسیریابی پیشرفته ترافیک و متعادل‌سازی بار نصب می‌کند.
 
-📢 Support | پشتیبانی
+17. **نصب پروکسی Socks5 WARP**
+    - یک پروکسی Socks5 مبتنی بر WARP روی پورت ۴۰۰۰۰ برای اتصال بهبودیافته راه‌اندازی می‌کند.
 
-برای راهنمایی و ارتباط با توسعه‌دهنده، در کانال تلگرام ما عضو شوید:
-ServerStar Telegram Channel
+18. **دریافت IPv6 محلی از وبسایت**
+    - آدرس‌های IPv6 محلی را از سرویس‌های آنلاین برای راه‌اندازی شبکه دریافت می‌کند.
 
+19. **بهینه‌سازی پارامترهای شبکه**
+    - پارامترهای شبکه سیستم را برای بهبود عملکرد و توان عملیاتی تنظیم می‌کند.
 
----
+20. **نصب نظارت سرور**
+    - ابزارهای جامع نظارت بر سرور را برای ردیابی منابع پیاده‌سازی می‌کند.
 
-Developed with love by Morteza — updated 2025
-توسعه داده شده با عشق توسط مرتضی — به‌روزرسانی‌شده در سال ۱۴۰۴
+21. **راه‌اندازی DNS امن (DoH/DoT)**
+    - DNS رمزگذاری شده را با استفاده از پروتکل‌های DoH/DoT برای افزایش حریم خصوصی و امنیت پیکربندی می‌کند.
 
-اگه خواستی برات به صورت فایل `.md` هم درست کنم و آپلود کنم، کافیه بگی.
+22. **راه‌اندازی سیستم پشتیبان‌گیری پیشرفته**
+    - یک راه‌حل پشتیبان‌گیری قوی با زمان‌بندی و سیاست‌های نگهداری پیاده‌سازی می‌کند.
 
+23. **پیکربندی فایروال سرور**
+    - فایروال UFW را با قوانین سفارشی برای محافظت از سرور در برابر دسترسی غیرمجاز راه‌اندازی می‌کند.
+
+24. **به‌روزرسانی اسکریپت پنل استار**
+    - اسکریپت پنل استار را به آخرین نسخه با ویژگی‌ها و اصلاحات جدید به‌روز می‌کند.
+
+25. **خروج**
+    - از منوی پنل استار خارج می‌شود.
