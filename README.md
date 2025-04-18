@@ -173,7 +173,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/Moriistar/ServerStar/main/inst
 
 ---
 
-## 📞 Contact | تماس 📞
+## 👤 Support / پشتیبانی 👤
 
 <div dir="ltr">
 
