@@ -1,5 +1,4 @@
 
-```markdown
 # 🌟 PANEL STAR | پنل استار 🌟
 
 <div dir="rtl">
